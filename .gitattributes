@@ -1,0 +1,13 @@
+# Fins de ligne normalisées dans le dépôt (LF), quel que soit le système du développeur
+* text=auto eol=lf
+
+# Les scripts Windows gardent leurs fins de ligne Windows
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Fichiers binaires jamais convertis
+*.jar binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.zip binary

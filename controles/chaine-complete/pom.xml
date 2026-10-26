@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    POM parent : chaque contrôle qualité y est configuré une seule fois. Les projets qui en héritent n'en déclarent
+    aucun ; chacun reste indépendant et se construit seul. Ce parent peut lui-même hériter d'un POM d'entreprise.
+  -->
+  <groupId>io.github.formatttech.qualite</groupId>
+  <artifactId>chaine-complete</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Qualité Java - Chaîne complète</name>
+  <description>
+    Tous les contrôles qualité réunis dans un POM parent : formatage, tests, architecture, couverture,
+    tests de mutation, analyse Sonar, failles des dépendances, SBOM.
+  </description>
+  <url>https://github.com/formatt-tech/qualite-java</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Matthieu Ladrat</name>
+      <organization>formatt</organization>
+      <url>https://github.com/formatt-tech</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/formatt-tech/qualite-java.git</connection>
+    <developerConnection>scm:git:git@github.com:formatt-tech/qualite-java.git</developerConnection>
+    <url>https://github.com/formatt-tech/qualite-java</url>
+  </scm>
+
+  <properties>
+    <!-- Java et encodage -->
+    <java.version>25</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Builds reproductibles : mêmes sources, mêmes octets dans le jar -->
+    <project.build.outputTimestamp>2026-10-20T00:00:00Z</project.build.outputTimestamp>
+
+    <!-- Sonar : clé du projet créé par SonarQube Cloud à l'import du dépôt (<organisation>_<dépôt>) ;
+         un autre projet qui hérite de ce parent redéfinit sonar.projectKey -->
+    <sonar.organization>formatt-tech</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.projectKey>${sonar.organization}_qualite-java</sonar.projectKey>
+    <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+
+    <!-- Sécurité des dépendances : le build échoue à partir de ce score CVSS (0 à 10) -->
+    <dependency-check.failBuildOnCVSS>7</dependency-check.failBuildOnCVSS>
+    <!-- Tests de mutation : part minimale de mutants détectés par les tests -->
+    <pitest.mutationThreshold>80</pitest.mutationThreshold>
+
+    <!-- Dépendances du code et des tests -->
+    <junit.version>6.1.3</junit.version>
+    <assertj.version>3.27.7</assertj.version>
+    <archunit.version>1.5.0</archunit.version>
+    <jspecify.version>1.0.0</jspecify.version>
+
+    <!-- Plugins -->
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+    <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
+    <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
+    <!-- Version par défaut de la version de Spotless ci-dessus : une version plus récente échoue (appel par réflexion) -->
+    <google-java-format.version>1.36.1</google-java-format.version>
+    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+    <cyclonedx-maven-plugin.version>2.9.3</cyclonedx-maven-plugin.version>
+    <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
+    <dependency-check-maven.version>13.0.0</dependency-check-maven.version>
+    <pitest-maven.version>1.30.1</pitest-maven.version>
+    <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.tngtech.archunit</groupId>
+        <artifactId>archunit-junit5</artifactId>
+        <version>${archunit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>${jspecify.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <compilerArgs>
+              <!-- Noms des paramètres conservés dans le bytecode, tous les avertissements du compilateur affichés -->
+              <arg>-parameters</arg>
+              <arg>-Xlint:all</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <!-- Tests unitaires (*Test) pendant la phase test -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <!-- Tests d'intégration (*IT) pendant la phase integration-test, vérifiés à verify -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <!-- Version épinglée pour « mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar » -->
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- Gouvernance du build : échec immédiat sur un mauvais environnement ou une dépendance indésirable -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-build-rules</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[${java.version},)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                </requireMavenVersion>
+                <banDuplicatePomDependencyVersions/>
+                <bannedDependencies>
+                  <excludes>
+                    <!-- Log4j 1 : plus maintenu, failles connues -->
+                    <exclude>log4j:log4j</exclude>
+                    <!-- Remplacé par une façade de logs (SLF4J) -->
+                    <exclude>commons-logging:commons-logging</exclude>
+                    <!-- JUnit 4 : les tests s'écrivent avec JUnit Jupiter -->
+                    <exclude>junit:junit</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Formatage : google-java-format, style AOSP ; le build échoue sur un fichier non formaté (verify) -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless-maven-plugin.version}</version>
+        <configuration>
+          <java>
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+              <style>AOSP</style>
+              <!-- Imports ordonnés selon le style AOSP, comme l'extension IntelliJ ; sans cette option,
+                   Spotless les ordonne toujours selon le style Google, et l'IDE et le build se contredisent -->
+              <reorderImports>true</reorderImports>
+              <reflowLongStrings>false</reflowLongStrings>
+              <formatJavadoc>true</formatJavadoc>
+            </googleJavaFormat>
+            <removeUnusedImports/>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Couverture : rapport lu par Sonar (target/site/jacoco/jacoco.xml) -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- SBOM : inventaire de tous les composants livrés par le projet (target/bom.json, target/bom.xml) -->
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <version>${cyclonedx-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>makeBom</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+        Tests de mutation (PIT) : dans le build par défaut, car rapide ici (quelques secondes) ; le seuil bloque donc
+        dès le poste du développeur, pas seulement en CI. S'il s'allonge sur un gros projet : le déplacer dans un profil
+        lancé par la CI, ou limiter la mutation aux classes modifiées.
+      -->
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>${pitest-maven.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>${pitest-junit5-plugin.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <mutationThreshold>${pitest.mutationThreshold}</mutationThreshold>
+          <timestampedReports>false</timestampedReports>
+          <outputFormats>
+            <outputFormat>HTML</outputFormat>
+            <outputFormat>XML</outputFormat>
+          </outputFormats>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>mutationCoverage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!--
+      Sécurité des dépendances (OWASP Dependency-Check) : profil, car la mise à jour de la base des failles est lente
+      et demande une clé. Lancé chaque semaine par la CI : il découvre les failles publiées depuis le dernier commit,
+      sur le code pas encore livré (les versions livrées sont surveillées par Dependency-Track).
+    -->
+    <profile>
+      <id>securite</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>${dependency-check-maven.version}</version>
+            <configuration>
+              <!-- Clé gratuite de la NVD, lue dans cette variable d'environnement (jamais écrite dans le POM ni dans les logs) ;
+                   sans elle, la mise à jour de la base des failles est très lente -->
+              <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
+              <failBuildOnCVSS>${dependency-check.failBuildOnCVSS}</failBuildOnCVSS>
+              <!-- Faux positifs propres à chaque projet, déclarés dans son propre fichier -->
+              <suppressionFiles>
+                <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
+              </suppressionFiles>
+              <formats>
+                <format>HTML</format>
+                <format>JSON</format>
+              </formats>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

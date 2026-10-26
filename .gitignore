@@ -1,0 +1,14 @@
+# Build
+target/
+
+# Éditeurs : aucune configuration d'IDE dans le dépôt
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Système
+.DS_Store
+Thumbs.db

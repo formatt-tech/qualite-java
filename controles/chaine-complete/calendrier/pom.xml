@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.formatttech.qualite</groupId>
+    <artifactId>chaine-complete</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <!-- Parent trouvé par son chemin (../pom.xml par défaut), sans installation ; ailleurs, téléchargé d'un dépôt -->
+  </parent>
+
+  <!-- Petit projet métier sur lequel tournent tous les contrôles ; aucun plugin, aucune version : tout vient du parent -->
+  <artifactId>calendrier</artifactId>
+  <name>Qualité Java - Chaîne complète - Calendrier des jours ouvrés</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
