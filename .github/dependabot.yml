@@ -1,0 +1,33 @@
+# Montées de version regroupées, vérifiées par le build ; les correctifs de sécurité arrivent sans attendre ce calendrier
+version: 2
+updates:
+  # Tous les POM sous controles/, sauf les projets non conformes, qui gardent exprès leurs mauvaises dépendances
+  - package-ecosystem: maven
+    directories:
+      - "/controles/**"
+    exclude-paths:
+      - "controles/**/non-conforme/**"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: build
+    groups:
+      maven:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: quarterly
+    commit-message:
+      prefix: build
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: quarterly
+    commit-message:
+      prefix: build

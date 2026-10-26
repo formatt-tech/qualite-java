@@ -1,0 +1,19 @@
+{
+  "name": "qualite-java",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "25",
+      "jdkDistro": "tem"
+    }
+  },
+  "postCreateCommand": "./mvnw -B -ntp -f controles verify",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "SonarSource.sonarlint-vscode"
+      ]
+    }
+  }
+}
