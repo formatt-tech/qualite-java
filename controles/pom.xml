@@ -20,6 +20,8 @@
     <module>formatage/google-java-format/conforme</module>
     <module>formatage/eclipse/conforme</module>
     <module>environnement/conforme</module>
+    <module>architecture/regles-communes</module>
+    <module>architecture/conforme</module>
     <module>chaine-complete/calendrier</module>
   </modules>
 </project>

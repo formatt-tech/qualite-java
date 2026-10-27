@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    Les règles d'architecture communes à tout le domaine, publiées comme une bibliothèque : un jar, versionné, que
+    le parent ../pom.xml impose à chaque projet. Pas de parent ici : en entreprise, ce jar vit dans son propre dépôt.
+  -->
+  <groupId>io.github.formatttech.qualite.architecture</groupId>
+  <artifactId>regles-communes</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+
+  <name>Qualité Java - Architecture - Règles communes</name>
+
+  <properties>
+    <maven.compiler.release>25</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <!-- Dans le code principal, et non en test : les règles sont le produit de ce jar -->
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+  </dependencies>
+</project>
