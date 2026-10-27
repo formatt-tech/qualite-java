@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.formatttech.qualite.environnement</groupId>
+    <artifactId>environnement</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <!--
+    La même dépendance que le projet non conforme, corrigée : commons-logging est exclu, et remplacé par le pont
+    jcl-over-slf4j, qui redirige ses appels vers SLF4J. Pas de code : la règle porte sur les dépendances.
+  -->
+  <artifactId>environnement-conforme</artifactId>
+  <packaging>pom</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.14</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>2.0.17</version>
+    </dependency>
+  </dependencies>
+</project>
