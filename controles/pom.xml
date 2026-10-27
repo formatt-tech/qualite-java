@@ -17,6 +17,8 @@
   <name>Qualité Java - Tous les contrôles</name>
 
   <modules>
+    <module>formatage/google-java-format/conforme</module>
+    <module>formatage/eclipse/conforme</module>
     <module>chaine-complete/calendrier</module>
   </modules>
 </project>

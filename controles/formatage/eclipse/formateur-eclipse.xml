@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Profil de formatage Eclipse, réduit aux réglages qui changent le rendu ; les autres gardent la valeur par défaut
+  d'Eclipse. En entreprise, ce fichier est le profil existant de l'équipe, exporté depuis Eclipse
+  (Preferences → Java → Code Style → Formatter → Export).
+-->
+<profiles version="23">
+  <profile kind="CodeFormatterProfile" name="qualite-java" version="23">
+    <!-- Indentation : 4 espaces, pas de tabulation -->
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+    <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+    <!-- Lignes de 100 caractères, comme dans .editorconfig -->
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="100"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="100"/>
+    <!-- Accolade ouvrante en fin de ligne, partout -->
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
+  </profile>
+</profiles>
