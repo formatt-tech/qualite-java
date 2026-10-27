@@ -26,7 +26,7 @@ Le dossier `chaine-complete/` réunit ensuite tous les contrôles dans un seul p
 | Besoin | Dossier | Outil |
 |---|---|---|
 | Un code formaté de la même façon par tous | [formatage/](controles/formatage/README.md) | Spotless, avec google-java-format ou le formateur Eclipse |
-| Un build qui refuse un mauvais environnement ou une dépendance indésirable | `environnement/` (à venir) | Maven Enforcer |
+| Un build qui refuse un mauvais environnement ou une dépendance indésirable | [environnement/](controles/environnement/README.md) | Maven Enforcer |
 | Des règles d'architecture vérifiées | `architecture/` (à venir) | ArchUnit |
 | Une couverture de tests mesurée | `couverture/` (à venir) | JaCoCo |
 | Des tests qui détectent vraiment les erreurs | `mutation/` (à venir) | PIT |

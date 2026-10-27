@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Parent : les règles d'environnement et de dépendances, vérifiées par Maven Enforcer dès la phase validate -->
+  <groupId>io.github.formatttech.qualite.environnement</groupId>
+  <artifactId>environnement</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Qualité Java - Environnement</name>
+
+  <properties>
+    <java.version>25</java.version>
+    <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>regles-environnement</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <!-- Le JDK et Maven du poste ou de la CI : trop anciens, le build s'arrête avant de compiler -->
+                <requireJavaVersion>
+                  <version>[${java.version},)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                </requireMavenVersion>
+                <!-- Une même dépendance déclarée deux fois dans un POM : la seconde écrase la première sans le dire -->
+                <banDuplicatePomDependencyVersions/>
+                <!-- Dépendances interdites, y compris quand elles arrivent par transitivité -->
+                <bannedDependencies>
+                  <excludes>
+                    <!-- Log4j 1 : plus maintenu, failles connues -->
+                    <exclude>log4j:log4j</exclude>
+                    <!-- Remplacée par une façade de logs (SLF4J) -->
+                    <exclude>commons-logging:commons-logging</exclude>
+                    <!-- JUnit 4 : les tests s'écrivent avec JUnit Jupiter -->
+                    <exclude>junit:junit</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
