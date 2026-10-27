@@ -37,6 +37,24 @@ Les deux projets n'ont pas de code : les règles portent sur l'environnement et 
 version du JDK et de Maven ne se montrent pas par un projet non conforme : il faudrait un autre JDK ; elles
 s'éprouvent en lançant le build avec Java 21.
 
+## Ce qu'on interdit en pratique
+
+La liste reste courte : quelques dizaines d'entrées au plus, dans le POM parent de l'entreprise. Elle ne sert pas à
+suivre les versions vétustes ou vulnérables, travail d'OWASP Dependency-Check et de Dependabot, mais à faire respecter
+des décisions que l'outillage ne voit pas seul :
+
+| On interdit… | Parce que la décision est… |
+|---|---|
+| `commons-logging`, `log4j:log4j`, les liaisons SLF4J concurrentes | « nos logs passent par SLF4J » : deux systèmes de logs mélangés perdent des messages |
+| `junit:junit` | « nos tests sont en JUnit 5 et plus » : des tests JUnit 4 ne seraient pas lancés |
+| `javax.servlet`, `javax.persistence`… | « nous sommes passés à Jakarta EE » : un reste de `javax` casse à l'exécution |
+| une plage de versions, comme `log4j-core` avant 2.17.1 | une faille si grave qu'on la bloque dès le build |
+| une bibliothèque sous licence incompatible | une décision juridique |
+
+Une entrée s'ajoute rarement : lors d'une migration, ou après un incident qu'on ne veut pas revivre. Règles voisines
+souvent ajoutées : `dependencyConvergence` (deux versions d'une même bibliothèque dans l'arbre) et
+`requireReleaseDeps` (aucune dépendance `SNAPSHOT` dans une version livrée).
+
 ## Pièges
 
 - **Trouver d'où vient une dépendance interdite** : `./mvnw dependency:tree -Dincludes=commons-logging` montre la

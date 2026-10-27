@@ -16,23 +16,12 @@
     <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
     <!-- Profil de formatage, à côté de ce POM ; évalué dans chaque projet, d'où le ../ -->
     <formateur.eclipse>${project.basedir}/../formateur-eclipse.xml</formateur.eclipse>
   </properties>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <!-- Le build échoue sur un fichier non formaté (phase verify) ; ./mvnw spotless:apply le corrige -->
       <plugin>

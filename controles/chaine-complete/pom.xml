@@ -50,8 +50,7 @@
     <!-- Builds reproductibles : mêmes sources, mêmes octets dans le jar -->
     <project.build.outputTimestamp>2026-10-20T00:00:00Z</project.build.outputTimestamp>
 
-    <!-- Sonar : clé du projet créé par SonarQube Cloud à l'import du dépôt (<organisation>_<dépôt>) ;
-         un autre projet qui hérite de ce parent redéfinit sonar.projectKey -->
+    <!-- Sonar : un projet Sonar par application, de clé <organisation>_<artifactId> -->
     <sonar.organization>formatt-tech</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.projectKey>${sonar.organization}_${project.artifactId}</sonar.projectKey>
@@ -65,21 +64,17 @@
     <!-- Dépendances du code et des tests -->
     <junit.version>6.1.3</junit.version>
     <assertj.version>3.27.7</assertj.version>
-    <archunit.version>1.5.0</archunit.version>
-    <jspecify.version>1.0.0</jspecify.version>
+    <archunit.version>1.5.1</archunit.version>
+    <jspecify.version>1.0.1</jspecify.version>
 
-    <!-- Plugins -->
-    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-    <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
-    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <!-- Plugins configurés ici ; les autres suivent la version de Maven, fixée par le wrapper -->
+    <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+    <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
     <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
     <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
     <!-- Version par défaut de la version de Spotless ci-dessus : une version plus récente échoue (appel par réflexion) -->
     <google-java-format.version>1.36.1</google-java-format.version>
-    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.16</jacoco-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.9.3</cyclonedx-maven-plugin.version>
     <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
     <dependency-check-maven.version>13.0.0</dependency-check-maven.version>
@@ -117,50 +112,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
-          <configuration>
-            <compilerArgs>
-              <!-- Noms des paramètres conservés dans le bytecode, tous les avertissements du compilateur affichés -->
-              <arg>-parameters</arg>
-              <arg>-Xlint:all</arg>
-            </compilerArgs>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${maven-resources-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>${maven-jar-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>${maven-install-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>${maven-deploy-plugin.version}</version>
-        </plugin>
-        <!-- Tests unitaires (*Test) pendant la phase test -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
-        </plugin>
-        <!-- Tests d'intégration (*IT) pendant la phase integration-test, vérifiés à verify -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
-        </plugin>
         <!-- Version épinglée pour « mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar » -->
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
@@ -171,6 +122,19 @@
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <compilerArgs>
+            <!-- Noms des paramètres conservés dans le bytecode, tous les avertissements du compilateur affichés -->
+            <arg>-parameters</arg>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
       <!-- Gouvernance du build : échec immédiat sur un mauvais environnement ou une dépendance indésirable -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -235,9 +199,12 @@
         </executions>
       </plugin>
 
+      <!-- Tests unitaires (*Test) : Surefire, pendant la phase test ; tests d'intégration (*IT) : Failsafe, pendant la
+           phase integration-test, vérifiés à verify -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe-plugin.version}</version>
         <executions>
           <execution>
             <goals>
