@@ -22,6 +22,8 @@
     <module>environnement/conforme</module>
     <module>architecture/regles-communes</module>
     <module>architecture/conforme</module>
+    <module>couverture/conforme</module>
+    <module>mutation/conforme</module>
     <module>chaine-complete/calendrier</module>
   </modules>
 </project>
