@@ -68,6 +68,10 @@ jobs:
           java-version: '25'
           cache: maven
 
+      # Les règles communes d'architecture sont une dépendance des projets qui les appliquent : installées d'abord
+      - name: Installer les dépendances des projets non conformes
+        run: ./mvnw -B -ntp -f controles/architecture/regles-communes install
+
       - name: Chaque projet non conforme échoue, pour la raison attendue
         run: |
           for projet in $(find controles -type d -name non-conforme | sort); do

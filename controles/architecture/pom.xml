@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    Parent : impose à chaque projet qui en hérite les règles d'architecture communes du domaine, publiées dans le jar
+    regles-communes. Le projet n'écrit aucune classe de test pour cela : Surefire lance les tests contenus dans ce jar.
+  -->
+  <groupId>io.github.formatttech.qualite.architecture</groupId>
+  <artifactId>architecture</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Qualité Java - Architecture</name>
+
+  <properties>
+    <maven.compiler.release>25</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+  </properties>
+
+  <!--
+    Dans chaque projet, pour les tests seulement : les règles communes. ArchUnit arrive avec elles, par transitivité,
+    dans la version avec laquelle les règles ont été écrites.
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>io.github.formatttech.qualite.architecture</groupId>
+      <artifactId>regles-communes</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+        <configuration>
+          <!-- Lance aussi les classes de test du jar des règles, comme si elles étaient dans le projet -->
+          <dependenciesToScan>
+            <dependency>io.github.formatttech.qualite.architecture:regles-communes</dependency>
+          </dependenciesToScan>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
