@@ -24,6 +24,7 @@
     <module>architecture/conforme</module>
     <module>couverture/conforme</module>
     <module>mutation/conforme</module>
+    <module>sbom/exemple</module>
     <module>chaine-complete/calendrier</module>
   </modules>
 </project>
