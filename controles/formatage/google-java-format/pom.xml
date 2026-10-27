@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Parent : le formatage par google-java-format, style AOSP. Ses projets ne déclarent rien d'autre que lui. -->
+  <groupId>io.github.formatttech.qualite.formatage</groupId>
+  <artifactId>google-java-format</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Qualité Java - Formatage - google-java-format</name>
+
+  <properties>
+    <maven.compiler.release>25</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
+    <!-- Version par défaut de la version de Spotless ci-dessus : une version plus récente échoue (appel par réflexion) -->
+    <google-java-format.version>1.36.1</google-java-format.version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- Le build échoue sur un fichier non formaté (phase verify) ; ./mvnw spotless:apply le corrige -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless-maven-plugin.version}</version>
+        <configuration>
+          <java>
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+              <!-- AOSP : indentation de 4 espaces, au lieu de 2 dans le style Google -->
+              <style>AOSP</style>
+              <!-- Imports ordonnés selon le style AOSP, comme l'extension IntelliJ ; sans cette option,
+                   Spotless les ordonne toujours selon le style Google, et l'IDE et le build se contredisent -->
+              <reorderImports>true</reorderImports>
+              <reflowLongStrings>false</reflowLongStrings>
+              <formatJavadoc>true</formatJavadoc>
+            </googleJavaFormat>
+            <removeUnusedImports/>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

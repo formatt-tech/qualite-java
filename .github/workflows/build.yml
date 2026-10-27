@@ -55,3 +55,33 @@ jobs:
         with:
           name: sbom
           path: controles/chaine-complete/calendrier/target/bom.*
+
+  # Chaque projet non conforme doit être rejeté par son outil, et pour la raison écrite dans son echec-attendu.txt :
+  # c'est la preuve que la configuration détecte ce qu'elle doit détecter
+  non-conformes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Chaque projet non conforme échoue, pour la raison attendue
+        run: |
+          for projet in $(find controles -type d -name non-conforme | sort); do
+            echo "::group::$projet"
+            if ./mvnw -B -ntp -f "$projet" verify > build.log 2>&1; then
+              cat build.log
+              echo "::error::$projet devait échouer, il a réussi"
+              exit 1
+            fi
+            if ! grep -qF -f "$projet/echec-attendu.txt" build.log; then
+              cat build.log
+              echo "::error::$projet a échoué, mais pas pour la raison attendue"
+              exit 1
+            fi
+            echo "$projet : rejeté comme attendu"
+            echo "::endgroup::"
+          done
