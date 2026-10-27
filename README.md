@@ -9,7 +9,8 @@ Les outils qui encadrent la qualité d'un projet Java / Maven, montrés un par u
 Tout est dans [controles/](controles), un dossier par besoin. Chaque dossier suit le même schéma : un `pom.xml`
 **parent** qui porte la configuration commentée de l'outil, et des projets **indépendants** qui en héritent. Un projet
 conforme, que l'outil accepte ; un projet non conforme, qu'il doit rejeter. La CI vérifie les deux : l'outil est bien
-configuré s'il laisse passer l'un **et** arrête l'autre, pour la bonne raison.
+configuré s'il laisse passer l'un **et** arrête l'autre, pour la bonne raison. Seule exception, `sbom/` : un
+inventaire n'accepte ni ne rejette rien, il n'a qu'un projet d'exemple.
 
 Le dossier `chaine-complete/` réunit ensuite tous les contrôles dans un seul parent, sur un petit projet métier.
 
@@ -31,7 +32,7 @@ Le dossier `chaine-complete/` réunit ensuite tous les contrôles dans un seul p
 | Une couverture de tests mesurée | [couverture/](controles/couverture/README.md) | JaCoCo |
 | Des tests qui détectent vraiment les erreurs | [mutation/](controles/mutation/README.md) | PIT |
 | Des dépendances sans faille connue | `vulnerabilites/` (à venir) | OWASP Dependency-Check |
-| L'inventaire des composants livrés (SBOM) | `sbom/` (à venir) | CycloneDX |
+| L'inventaire des composants livrés (SBOM) | [sbom/](controles/sbom/README.md) | CycloneDX |
 | Tout réunir dans un POM parent | [chaine-complete/](controles/chaine-complete/README.md) | tous, plus SonarQube Cloud |
 
 ## Essayer
