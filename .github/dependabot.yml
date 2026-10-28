@@ -6,6 +6,7 @@ updates:
     directories:
       - "/controles/**"
     exclude-paths:
+      - "controles/**/non-conforme"
       - "controles/**/non-conforme/**"
     schedule:
       interval: monthly
