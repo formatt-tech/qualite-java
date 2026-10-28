@@ -16,7 +16,7 @@
   <name>Qualité Java - Chaîne complète</name>
   <description>
     Tous les contrôles qualité réunis dans un POM parent : formatage, tests, architecture, couverture,
-    tests de mutation, analyse Sonar, failles des dépendances, SBOM.
+    tests de mutation, analyse Sonar, SBOM.
   </description>
   <url>https://github.com/formatt-tech/qualite-java</url>
 
@@ -56,8 +56,6 @@
     <sonar.projectKey>${sonar.organization}_${project.artifactId}</sonar.projectKey>
     <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
 
-    <!-- Sécurité des dépendances : le build échoue à partir de ce score CVSS (0 à 10) -->
-    <dependency-check.failBuildOnCVSS>7</dependency-check.failBuildOnCVSS>
     <!-- Tests de mutation : part minimale de mutants détectés par les tests -->
     <pitest.mutationThreshold>80</pitest.mutationThreshold>
 
@@ -77,7 +75,6 @@
     <jacoco-maven-plugin.version>0.8.16</jacoco-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.9.3</cyclonedx-maven-plugin.version>
     <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
-    <dependency-check-maven.version>13.0.0</dependency-check-maven.version>
     <pitest-maven.version>1.30.1</pitest-maven.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
   </properties>
@@ -280,45 +277,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <!--
-      Sécurité des dépendances (OWASP Dependency-Check) : profil, car la mise à jour de la base des failles est lente
-      et demande une clé. Lancé chaque semaine par la CI : il découvre les failles publiées depuis le dernier commit,
-      sur le code pas encore livré (les versions livrées sont surveillées par Dependency-Track).
-    -->
-    <profile>
-      <id>securite</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.owasp</groupId>
-            <artifactId>dependency-check-maven</artifactId>
-            <version>${dependency-check-maven.version}</version>
-            <configuration>
-              <!-- Clé gratuite de la NVD, lue dans cette variable d'environnement (jamais écrite dans le POM ni dans les logs) ;
-                   sans elle, la mise à jour de la base des failles est très lente -->
-              <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
-              <failBuildOnCVSS>${dependency-check.failBuildOnCVSS}</failBuildOnCVSS>
-              <!-- Faux positifs propres à chaque projet, déclarés dans son propre fichier -->
-              <suppressionFiles>
-                <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
-              </suppressionFiles>
-              <formats>
-                <format>HTML</format>
-                <format>JSON</format>
-              </formats>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

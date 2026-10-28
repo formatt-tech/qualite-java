@@ -14,20 +14,18 @@ Chaque autre dossier montre un outil seul. Ici, ils fonctionnent ensemble :
 
 - **ils interagissent** : JaCoCo instrumente les tests, Sonar lit son rapport ; PIT relance les tests en désactivant
   JaCoCo ;
-- **ils ne coûtent pas le même temps** : tout ce qui est rapide tourne à chaque build, PIT compris ; Dependency-Check,
-  lent, est dans un profil lancé chaque semaine ;
+- **ils ne coûtent pas le même temps** : tout ce qui est rapide tourne à chaque build, PIT compris ; un contrôle lent
+  passerait dans un profil, lancé par la CI à intervalle régulier ;
 - **ils s'adaptent au projet** : un projet règle ou désactive un contrôle par une propriété, sans toucher au parent ;
 - **ils s'adaptent au contexte** : chaque outil est un choix par défaut, à confronter à l'existant.
 
 ## Lancer
 
 ```bash
-./mvnw -f controles/chaine-complete/calendrier verify               # tous les contrôles du build
-./mvnw -f controles/chaine-complete/calendrier verify -Psecurite    # en plus : failles des dépendances
+./mvnw -f controles/chaine-complete/calendrier verify    # tous les contrôles du build
 ```
 
-Sous Windows : `.\mvnw.cmd` au lieu de `./mvnw`. `-Psecurite` demande une clé gratuite de la NVD dans la variable
-d'environnement `NVD_API_KEY`.
+Sous Windows : `.\mvnw.cmd` au lieu de `./mvnw`.
 
 ## Où chaque contrôle intervient
 
@@ -41,7 +39,6 @@ flowchart LR
     P --> I["integration-test<br/>tests *IT, Failsafe"]
     I --> VE["verify<br/>formatage Spotless<br/>rapport JaCoCo<br/>mutation PIT"]
     VE --> S["après le build<br/>Sonar et son seuil"]
-    VE -.-> N["profil, chaque semaine<br/>Dependency-Check"]
 ```
 
 ## Les contrôles
@@ -58,7 +55,6 @@ flowchart LR
 | Inventaire des composants | CycloneDX | — produit à chaque build | `calendrier/target/bom.json`, `calendrier/target/bom.xml` |
 | Qualité et sécurité du code | SonarQube Cloud, « Sonar way » | le seuil n'est pas atteint sur le nouveau code : nouveau problème, couverture < 80 %, duplication, point sensible non revu | SonarQube Cloud |
 | Qualité des tests | PIT | moins de 80 % des mutants détectés | `calendrier/target/pit-reports/index.html` |
-| Failles des dépendances (`-Psecurite`) | OWASP Dependency-Check | une faille de gravité 7 ou plus (CVSS) | `calendrier/target/dependency-check-report.html` |
 
 Le calendrier n'a pas de test d'intégration : il ne dépend d'aucune ressource extérieure (fichier, base, service), et
 tous ses tests sont unitaires, même ceux qui parcourent des siècles. Failsafe reste configuré dans le parent pour les
@@ -68,10 +64,11 @@ PIT relance les tests pour chaque mutant : ici, quelques secondes, il reste donc
 développeur. Sur un gros projet, il prendrait des dizaines de minutes : on le limite alors aux classes modifiées par la
 pull request, et l'analyse complète passe dans un profil planifié.
 
-Dependency-Check est dans un profil : la mise à jour de sa base de failles est lente et demande une clé. Son intérêt
-au-delà du build : découvrir les failles publiées **depuis** le dernier commit, sur le code pas encore livré. La CI le
-lance chaque lundi (`weekly.yml`). Les versions livrées, elles, sont surveillées par Dependency-Track à partir de leur
-SBOM, et GitHub signale de son côté les dépendances vulnérables (alertes Dependabot).
+Les failles des dépendances ne sont pas cherchées pendant le build. GitHub signale les dépendances vulnérables du code
+de `main` (alertes Dependabot), et Dependency-Track surveille les versions livrées à partir de leur SBOM : les deux en
+continu, y compris pour les failles publiées après le dernier build. Un outil dans le build, comme OWASP
+Dependency-Check, bloquerait en plus une pull request qui ajoute une dépendance vulnérable, au prix d'une base de
+failles lente à mettre à jour et d'une clé d'accès à la NVD.
 
 ## Régler un contrôle, projet par projet
 
@@ -81,14 +78,9 @@ Chaque seuil est une propriété du parent ; un projet la redéfinit dans ses `<
 |---|---|---|
 | `java.version` | version de Java du projet | 25 |
 | `pitest.mutationThreshold` | part minimale de mutants détectés | 80 |
-| `dependency-check.failBuildOnCVSS` | gravité à partir de laquelle une faille fait échouer | 7 |
 
 Un contrôle se désactive de la même façon, par une propriété standard du plugin : `spotless.check.skip`,
 `enforcer.skip`, `skipITs`, `jacoco.skip`, `cyclonedx.skip`. C'est exceptionnel, temporaire et justifié.
-
-Un faux positif de Dependency-Check se déclare dans le fichier du projet,
-[calendrier/dependency-check-suppressions.xml](calendrier/dependency-check-suppressions.xml), avec sa raison et une date
-de révision.
 
 ## Adapter au contexte
 
@@ -99,7 +91,7 @@ place, et on ne remplace un outil qu'avec l'accord de ceux qui l'exploitent.
 |---|---|---|
 | google-java-format | formateur Eclipse partagé | ne pas reformater tout le code sans accord, et alors en un seul commit, ignoré par `git blame` |
 | SonarQube Cloud, « Sonar way » | SonarQube Server, profil et seuil maison | règles et seuil imposés, version du serveur, accès depuis la CI |
-| Dependency-Check, pendant le build | Snyk, Sonatype Nexus IQ, JFrog Xray | outil déjà en place ou sous licence ; accès à la base NVD depuis le réseau, sinon miroir interne |
+| Pas de recherche de failles pendant le build | OWASP Dependency-Check, Snyk, Sonatype Nexus IQ, JFrog Xray | outil déjà en place ou sous licence ; accès à la base des failles depuis le réseau, sinon miroir interne |
 | SBOM CycloneDX, conservé par la CI | Dependency-Track qui surveille les versions livrées ; format SPDX exigé | où déposer le SBOM, dans quel format |
 | POM parent du projet | POM parent d'entreprise | le parent du projet hérite de celui de l'entreprise et peut durcir ses règles, jamais les assouplir ni les contourner |
 | Java 25 | version imposée par la production | Enforcer aligné sur la cible réelle |

@@ -31,7 +31,6 @@ Le dossier `chaine-complete/` réunit ensuite tous les contrôles dans un seul p
 | Des règles d'architecture vérifiées | [architecture/](controles/architecture/README.md) | ArchUnit |
 | Une couverture de tests mesurée | [couverture/](controles/couverture/README.md) | JaCoCo |
 | Des tests qui détectent vraiment les erreurs | [mutation/](controles/mutation/README.md) | PIT |
-| Des dépendances sans faille connue | `vulnerabilites/` (à venir) | OWASP Dependency-Check |
 | L'inventaire des composants livrés (SBOM) | [sbom/](controles/sbom/README.md) | CycloneDX |
 | Tout réunir dans un POM parent | [chaine-complete/](controles/chaine-complete/README.md) | tous, plus SonarQube Cloud |
 
