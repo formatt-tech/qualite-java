@@ -38,7 +38,9 @@ JUnit n'y figure pas : utilisé seulement par les tests, il n'est pas livré.
 ## À quoi il sert ensuite
 
 - **Dependency-Track** (ou un outil équivalent) reçoit le SBOM de chaque version livrée, et le confronte chaque jour
-  aux failles publiées : c'est la surveillance des versions en production, que le build ne fait pas.
+  aux failles publiées : c'est la surveillance des versions en production, que le build ne fait pas. Les alertes
+  Dependabot font le même travail sur le code de `main` : à eux deux, ils couvrent les failles des dépendances de ce
+  dépôt.
 - **Le client ou l'auditeur** le demande de plus en plus : le Cyber Resilience Act européen impose aux fabricants
   de logiciels de tenir un SBOM de leurs produits.
 - **Le dépôt Maven** le garde avec le jar : CycloneDX l'attache au projet (`-cyclonedx.json`, `-cyclonedx.xml`),

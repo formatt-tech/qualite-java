@@ -25,8 +25,9 @@ apporte `commons-logging`, interdite. Enforcer le signale, avec le chemin qui y 
 
 ```text
 Rule 3: org.apache.maven.enforcer.rules.dependency.BannedDependencies failed with message:
-...
-   commons-logging:commons-logging:jar:1.2 <--- banned via the exclude/include list
+io.github.formatttech.qualite.environnement:environnement-non-conforme:pom:0.1.0-SNAPSHOT
+   org.apache.httpcomponents:httpclient:jar:4.5.14
+      commons-logging:commons-logging:jar:1.2 <--- banned via the exclude/include list
 ```
 
 Le [projet conforme](conforme/pom.xml) montre la correction habituelle : exclure la dépendance indésirable, et la
@@ -40,8 +41,8 @@ s'éprouvent en lançant le build avec Java 21.
 ## Ce qu'on interdit en pratique
 
 La liste reste courte : quelques dizaines d'entrées au plus, dans le POM parent de l'entreprise. Elle ne sert pas à
-suivre les versions vétustes ou vulnérables, travail d'OWASP Dependency-Check et de Dependabot, mais à faire respecter
-des décisions que l'outillage ne voit pas seul :
+suivre les versions vétustes ou vulnérables, travail des alertes Dependabot et de Dependency-Track, mais à faire
+respecter des décisions que l'outillage ne voit pas seul :
 
 | On interdit… | Parce que la décision est… |
 |---|---|
