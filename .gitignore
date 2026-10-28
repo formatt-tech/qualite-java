@@ -12,3 +12,7 @@ target/
 # Système
 .DS_Store
 Thumbs.db
+
+# Fichiers de travail des outils Sonar sur le poste (extension de l'IDE, analyse locale)
+.sonar/
+.scannerwork/

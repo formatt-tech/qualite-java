@@ -34,8 +34,8 @@ Le rapport, `target/pit-reports/index.html`, montre chaque mutant survivant sur 
   dans [chaine-complete/](../chaine-complete/README.md), où PIT tourne à chaque build. Sur un gros projet, on le
   limite aux classes modifiées (`scmMutationCoverage`), on réutilise l'analyse précédente (`withHistory`), ou on le
   lance dans un profil réservé à la CI.
-- **Les classes mutées** sont par défaut celles dont le paquet commence par le `groupId` du projet : un code rangé
-  sous une autre racine n'est pas muté, sans avertissement. `targetClasses` les désigne explicitement.
+- **Les classes mutées** sont par défaut toutes celles du projet compilé. Le code généré ou sans logique s'écarte par
+  `excludedClasses`, pour ne pas fausser le score ni allonger le build.
 - **JUnit Jupiter** a besoin du greffon `pitest-junit5-plugin`, déclaré dans les dépendances du plugin : sans lui,
   le build échoue sur « Please check you have correctly installed the pitest plugin for your project's test
   library ».
