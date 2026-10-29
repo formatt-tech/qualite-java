@@ -9,11 +9,18 @@
   },
   "postCreateCommand": "./mvnw -B -ntp -f controles verify",
   "customizations": {
+    "codespaces": {
+      "openFiles": ["README.md"]
+    },
     "vscode": {
       "extensions": [
-        "vscjava.vscode-java-pack",
-        "SonarSource.sonarlint-vscode"
-      ]
+        "vscjava.vscode-java-pack"
+      ],
+      "settings": {
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        }
+      }
     }
   }
 }
