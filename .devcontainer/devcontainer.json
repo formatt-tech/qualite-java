@@ -7,16 +7,18 @@
       "jdkDistro": "tem"
     }
   },
-  "postCreateCommand": "./mvnw -B -ntp -f controles verify",
+  "updateContentCommand": "./mvnw -B -ntp -f controles verify -DskipPitest",
   "customizations": {
     "vscode": {
       "extensions": [
-        "vscjava.vscode-java-pack"
+        "vscjava.vscode-java-pack",
+        "SonarSource.sonarlint-vscode"
       ],
       "settings": {
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
-        }
+        },
+        "workbench.editor.enablePreview": false
       }
     }
   }
