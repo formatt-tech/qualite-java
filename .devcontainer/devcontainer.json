@@ -11,8 +11,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "vscjava.vscode-java-pack",
-        "SonarSource.sonarlint-vscode"
+        "vscjava.vscode-java-pack"
       ],
       "settings": {
         "workbench.editorAssociations": {
